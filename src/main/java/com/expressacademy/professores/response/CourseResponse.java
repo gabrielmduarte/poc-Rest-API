@@ -14,7 +14,7 @@ public class CourseResponse {
 
     private Long id;
 
-    private TeacherNameAndIdResponse teacher;
+    private TeacherResponse teacher;
 
     private LanguageResponse language;
 

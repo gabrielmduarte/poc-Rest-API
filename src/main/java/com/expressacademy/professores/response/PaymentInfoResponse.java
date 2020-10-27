@@ -5,12 +5,14 @@ import lombok.Data;
 @Data
 public class PaymentInfoResponse {
 
-    private AddressResponse address;
+    private String bank;
 
-    private BankDataResponse bankData;
+    private int bankCode;
 
-    private String email;
+    private String agency;
 
-    private String cpf;
+    private String accountNumber;
+
+    private String type;
 
 }

@@ -9,7 +9,6 @@ import com.expressacademy.professores.response.TeacherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,67 +19,65 @@ public class TeachersService {
     private TeachersMapper teacherMapper;
 
     @Autowired
-    private TeachersRepository repository;
+    private TeachersRepository teacherRepository;
 
     public void create(TeachersRequest request) {
-        TeacherEntity teachersEntity = teacherMapper.toEntity(request);
-        teachersEntity.setActive(true);
+        TeacherEntity teacherEntity = teacherMapper.toEntity(request);
+        int bankCode = teacherEntity.getPaymentInfo().getBank().getCode();
 
-        repository.save(teachersEntity);
+        teacherEntity.getPaymentInfo().setBankCode(bankCode);
+        teacherEntity.getPaymentInfo().getType().getName();
+        teacherEntity.setActive(true);
+
+        teacherRepository.save(teacherEntity);
     }
 
     public List<TeacherResponse> findAll() {
-        return repository.findByActiveTrue()
+        return teacherRepository.findByActiveTrue()
                 .stream()
                 .map(entity -> teacherMapper.toResponse(entity))
                 .collect(Collectors.toList());
     }
 
     public TeacherResponse findById(Long id) {
-        TeacherEntity entity = repository.findByIdAndActiveTrue(id)
+        TeacherEntity entity = teacherRepository.findByIdAndActiveTrue(id)
                                             .orElseThrow(TeacherNotFoundException::new);
 
         return teacherMapper.toResponse(entity);
     }
 
     public void update(Long id, TeachersRequest request) {
-        TeacherEntity entity = repository.findByIdAndActiveTrue(id)
+        TeacherEntity entity = teacherRepository.findByIdAndActiveTrue(id)
                                             .orElseThrow(TeacherNotFoundException::new);
 
         AddressEntity address = new AddressEntity();
-
-        address.setAddress(request.getPaymentInfo().getAddress().getAddress());
-        address.setCity(request.getPaymentInfo().getAddress().getCity());
-        address.setPostalCode(request.getPaymentInfo().getAddress().getPostalCode());
-        address.setState(request.getPaymentInfo().getAddress().getState());
-
-        BankDataEntity bankData = new BankDataEntity();
-
-        bankData.setAccountNumber(request.getPaymentInfo().getBankData().getAccountNumber());
-        bankData.setAgency(request.getPaymentInfo().getBankData().getAgency());
-        bankData.setBank(request.getPaymentInfo().getBankData().getBank());
-        bankData.setCode(request.getPaymentInfo().getBankData().getCode());
-        bankData.setType(request.getPaymentInfo().getBankData().getType());
+        address.setState(request.getAddress().getState());
+        address.setPostalCode(request.getAddress().getPostalCode());
+        address.setCity(request.getAddress().getCity());
+        address.setAddress(request.getAddress().getAddress());
 
         PaymentInfoEntity paymentInfo = new PaymentInfoEntity();
+        paymentInfo.setBank(request.getPaymentInfo().getBank());
+        paymentInfo.setBankCode(request.getPaymentInfo().getBank().getCode());
+        paymentInfo.setAccountNumber(request.getPaymentInfo().getAccountNumber());
+        paymentInfo.setAgency(request.getPaymentInfo().getAgency());
+        paymentInfo.setType(request.getPaymentInfo().getType());
 
-        paymentInfo.setEmail(request.getPaymentInfo().getEmail());
-        paymentInfo.setCpf(request.getPaymentInfo().getCpf());
-        paymentInfo.setBankData(bankData);
-        paymentInfo.setAddress(address);
-
-        entity.setName(request.getName());
+        entity.setAddress(address);
         entity.setPaymentInfo(paymentInfo);
+        entity.setName(request.getName());
+        entity.setCpf(request.getCpf());
+        entity.setEmail(request.getEmail());
 
-        repository.save(entity);
+        teacherRepository.save(entity);
     }
 
     public void delete(Long id) {
-        TeacherEntity entity = repository.findByIdAndActiveTrue(id)
+        TeacherEntity entity = teacherRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(TeacherNotFoundException::new);
 
         entity.setActive(false);
 
-        repository.save(entity);
+        teacherRepository.save(entity);
     }
 }

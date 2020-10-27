@@ -11,8 +11,14 @@ public class TeacherResponse {
 
     private String name;
 
-    private List<CourseIdLevelLanguageAndEnrollmentsResponse> courses;
+    private List<CourseResponse> courses;
+
+    private String email;
+
+    private String cpf;
 
     private PaymentInfoResponse paymentInfo;
+
+    private AddressResponse address;
 
 }

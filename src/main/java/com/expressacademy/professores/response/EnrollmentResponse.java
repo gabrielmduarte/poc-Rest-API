@@ -20,6 +20,6 @@ public class EnrollmentResponse {
 
     private StudentResponse student;
 
-    private CourseIdLevelLanguageAndEnrollmentsResponse course;
+    private CourseResponse course;
 
 }

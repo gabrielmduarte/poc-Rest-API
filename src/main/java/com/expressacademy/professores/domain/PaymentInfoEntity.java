@@ -13,17 +13,20 @@ public class PaymentInfoEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
-    private AddressEntity address;
+    @Column(nullable = false)
+    private Banks bank;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
-    private BankDataEntity bankData;
-
-    @Column(nullable = false)//unique
-    private String email;
+    private int bankCode;
 
     @Column(nullable = false)
-    private String cpf; //document
+    private String agency;
+
+    @Column(nullable = false)
+    private String accountNumber;
+
+    @Column(nullable = false)
+    private AccountType type;
+
 
 
 

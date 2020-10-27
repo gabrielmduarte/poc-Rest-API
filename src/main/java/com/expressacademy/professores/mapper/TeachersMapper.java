@@ -8,7 +8,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = PaymentInfoMapper.class)
+        uses = {PaymentInfoMapper.class, AddressMapper.class})
 public interface TeachersMapper {
 
     TeacherEntity toEntity(TeachersRequest request);

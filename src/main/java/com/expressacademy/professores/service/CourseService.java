@@ -65,7 +65,7 @@ public class CourseService {
                 .findByIdAndActiveTrue(courseRequest.getLanguageId())
                 .orElseThrow(LanguageNotFoundException::new);
 
-//        List<CourseEntity> courses = new ArrayList<>();
+        //        List<CourseEntity> courses = new ArrayList<>();
 //        courses.add(courseEntity);
 //        teacherEntity.setCourses(courses);
 
