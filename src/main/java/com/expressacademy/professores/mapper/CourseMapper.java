@@ -16,10 +16,18 @@ public interface CourseMapper {
 
     CourseEntity toEntity(CourseRequest request);
 
+    @Mapping(target = "status", expression = "java(entity.getStatusDescription())")
+    @Mapping(target = "level", expression = "java(entity.getLevelName())")
+    @Mapping(target = "classDay", expression = "java(entity.getClassDayName())")
     @Mapping(target = "totalEnrollments", expression = "java(entity.getEnrollments().size())")
-//    @Mapping(target = "totalEnrollments", qualifiedByName = "getTotalEnrollments")
+    @Mapping(target = "teacher", expression = "java(entity.getTeacherName())")
+    @Mapping(target = "language", expression = "java(entity.getLanguageName())")
     CourseResponse toResponse(CourseEntity entity);
 
+
+//outro modo de fazer o mapping
+//    @Mapping(target = "totalEnrollments", qualifiedByName = "getTotalEnrollments")
+//    CourseResponse toResponse(CourseEntity entity);
 //    @Named("getTotalEnrollments")
 //    default int getTotalEnrollments(CourseEntity entity) {
 //        return entity.getEnrollments().size();

@@ -9,6 +9,7 @@ import com.expressacademy.professores.response.TeacherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,11 +24,9 @@ public class TeachersService {
 
     public void create(TeachersRequest request) {
         TeacherEntity teacherEntity = teacherMapper.toEntity(request);
-        int bankCode = teacherEntity.getPaymentInfo().getBank().getCode();
 
-        teacherEntity.getPaymentInfo().setBankCode(bankCode);
-        teacherEntity.getPaymentInfo().getType().getName();
         teacherEntity.setActive(true);
+        teacherEntity.setCourses(new ArrayList<>());
 
         teacherRepository.save(teacherEntity);
     }
@@ -58,7 +57,6 @@ public class TeachersService {
 
         PaymentInfoEntity paymentInfo = new PaymentInfoEntity();
         paymentInfo.setBank(request.getPaymentInfo().getBank());
-        paymentInfo.setBankCode(request.getPaymentInfo().getBank().getCode());
         paymentInfo.setAccountNumber(request.getPaymentInfo().getAccountNumber());
         paymentInfo.setAgency(request.getPaymentInfo().getAgency());
         paymentInfo.setType(request.getPaymentInfo().getType());
@@ -80,4 +78,21 @@ public class TeachersService {
 
         teacherRepository.save(entity);
     }
+
+    public TeacherEntity findByIdAndReturnEntity(Long id) {
+        return teacherRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(TeacherNotFoundException::new);
+    }
+
+    public void addCourseInTeacherList(CourseEntity courseEntity,
+                                       TeacherEntity teacherEntity) {
+        teacherEntity.getCourses().add(courseEntity);
+        teacherRepository.save(teacherEntity);
+    }
+
+    public void removeCourseOfTeacherList(CourseEntity courseEntity, TeacherEntity oldTeacher) {
+        oldTeacher.getCourses().remove(courseEntity);
+        teacherRepository.save(oldTeacher);
+    }
+
 }

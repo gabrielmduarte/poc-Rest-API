@@ -4,18 +4,15 @@ import com.expressacademy.professores.domain.CourseEntity;
 import com.expressacademy.professores.domain.LanguageEntity;
 import com.expressacademy.professores.domain.TeacherEntity;
 import com.expressacademy.professores.exception.CourseNotFoundException;
-import com.expressacademy.professores.exception.LanguageNotFoundException;
-import com.expressacademy.professores.exception.TeacherNotFoundException;
 import com.expressacademy.professores.mapper.CourseMapper;
-import com.expressacademy.professores.mapper.LanguageMapper;
 import com.expressacademy.professores.repository.CourseRepository;
-import com.expressacademy.professores.repository.LanguageRepository;
-import com.expressacademy.professores.repository.TeachersRepository;
 import com.expressacademy.professores.request.CourseRequest;
 import com.expressacademy.professores.response.CourseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,13 +26,10 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
-    private TeachersRepository teacherRepository;
+    private TeachersService teachersService;
 
     @Autowired
-    private LanguageMapper languageMapper;
-
-    @Autowired
-    private LanguageRepository languageRepository;
+    private LanguageService languageService;
 
     public List<CourseResponse> findAll() {
         return courseRepository.findByActiveTrue()
@@ -53,32 +47,21 @@ public class CourseService {
 
     public void create(CourseRequest courseRequest) {
         CourseEntity courseEntity = courseMapper.toEntity(courseRequest);
-        courseEntity.setActive(true);
-        courseEntity.setAllMonthlyFeePaid(true);
-//        courseEntity.setTotalEnrollments(courseEntity.getEnrollments().size());
+        TeacherEntity teacherEntity = teachersService
+                                        .findByIdAndReturnEntity(courseRequest.getTeacherId());
+        LanguageEntity languageEntity = languageService
+                                        .findByIdAndReturnEntity(courseRequest.getLanguageId());
 
-        TeacherEntity teacherEntity = teacherRepository
-                .findByIdAndActiveTrue(courseRequest.getTeacherId())
-                .orElseThrow(TeacherNotFoundException::new);
-
-        LanguageEntity languageEntity = languageRepository
-                .findByIdAndActiveTrue(courseRequest.getLanguageId())
-                .orElseThrow(LanguageNotFoundException::new);
-
-        //        List<CourseEntity> courses = new ArrayList<>();
-//        courses.add(courseEntity);
-//        teacherEntity.setCourses(courses);
-
-//        teacherEntity.setCourses(List.of(courseEntity));
-
-//        List<CourseEntity> courseEntities = Arrays.asList(courseEntity);
+        LocalTime time = LocalTime.of(courseRequest.getHour(),courseRequest.getMinutes());
 
         courseEntity.setLanguage(languageEntity);
         courseEntity.setTeacher(teacherEntity);
+        courseEntity.setEnrollments(new ArrayList<>());
+        courseEntity.setTime(time);
+        courseEntity.setActive(true);
 
-        teacherEntity.getCourses().add(courseEntity); //errado vai virar linha 72
+        teachersService.addCourseInTeacherList(courseEntity, teacherEntity);
 
-        teacherRepository.save(teacherEntity);
         courseRepository.save(courseEntity);
     }
 
@@ -86,40 +69,41 @@ public class CourseService {
         CourseEntity courseEntity = courseRepository.findByIdAndActiveTrue(id)
                                                     .orElseThrow(CourseNotFoundException::new);
 
+        updateAllAtributes(courseRequest, courseEntity);
+
+        courseRepository.save(courseEntity);
+    }
+
+    private void updateAllAtributes(CourseRequest courseRequest, CourseEntity courseEntity) {
+        LocalTime time = LocalTime.of(courseRequest.getHour(), courseRequest.getMinutes());
+
+        courseEntity.setTime(time);
+        courseEntity.setNumberOfClasses(courseRequest.getNumberOfClasses());
+        courseEntity.setStatus(courseRequest.getStatus());
+        courseEntity.setLevel(courseRequest.getLevel());
         courseEntity.setClassDay(courseRequest.getClassDay());
         courseEntity.setClassesGiven(courseRequest.getClassesGiven());
-        courseEntity.setFirstMonth(courseRequest.getFirstMonth());
-        courseEntity.setHour(courseRequest.getHour());
-        courseEntity.setLastMonth(courseRequest.getLastMonth());
-        courseEntity.setLevel(courseRequest.getLevel());
-        courseEntity.setMonthlyPrice(courseRequest.getMonthlyPrice());
-        courseEntity.setNote(courseRequest.getNote());
         courseEntity.setNumberOfClasses(courseRequest.getNumberOfClasses());
-//        courseEntity.setTotalEnrollments(courseEntity.getEnrollments().size());
+        courseEntity.setNote(courseRequest.getNote());
+        courseEntity.setMonthlyPrice(courseRequest.getMonthlyPrice());
 
-        if (courseEntity.getTeacher().getId() != courseRequest.getTeacherId()) {
-            courseEntity.getTeacher().getCourses().remove(courseEntity);
+        if(courseEntity.getTeacher().getId() != courseRequest.getTeacherId()) {
+            TeacherEntity newTeacher = teachersService
+                    .findByIdAndReturnEntity(courseRequest.getTeacherId());
+            TeacherEntity oldTeacher = courseEntity.getTeacher();
 
-            TeacherEntity newTeacherEntity = teacherRepository
-                    .findByIdAndActiveTrue(courseRequest.getTeacherId())
-                    .orElseThrow(TeacherNotFoundException::new);
+            teachersService.addCourseInTeacherList(courseEntity, newTeacher);
+            teachersService.removeCourseOfTeacherList(courseEntity, oldTeacher);
 
-            newTeacherEntity.getCourses().add(courseEntity);
-
-            teacherRepository.save(newTeacherEntity);
-
-            courseEntity.setTeacher(newTeacherEntity);
+            courseEntity.setTeacher(newTeacher);
         }
 
-        if (courseEntity.getLanguage().getId() != courseRequest.getLanguageId()) {
-            LanguageEntity languageEntity = languageRepository
-                    .findByIdAndActiveTrue(courseRequest.getLanguageId())
-                    .orElseThrow(LanguageNotFoundException::new);
+        if(courseEntity.getLanguage().getId() != courseRequest.getLanguageId()) {
+            LanguageEntity languageEntity = languageService
+                                            .findByIdAndReturnEntity(courseRequest.getLanguageId());
 
             courseEntity.setLanguage(languageEntity);
         }
-
-        courseRepository.save(courseEntity);
     }
 
     public void delete(Long id) {

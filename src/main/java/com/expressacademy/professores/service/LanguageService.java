@@ -40,4 +40,10 @@ public class LanguageService {
         languageEntity.setActive(true);
         languageRepository.save(languageEntity);
     }
+
+    public LanguageEntity findByIdAndReturnEntity(Long id) {
+        return languageRepository.findByIdAndActiveTrue(id)
+                                  .orElseThrow(LanguageNotFoundException::new);
+    }
+
 }

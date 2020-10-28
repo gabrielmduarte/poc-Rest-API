@@ -16,8 +16,6 @@ public class PaymentInfoEntity {
     @Column(nullable = false)
     private Banks bank;
 
-    private int bankCode;
-
     @Column(nullable = false)
     private String agency;
 
@@ -26,13 +24,5 @@ public class PaymentInfoEntity {
 
     @Column(nullable = false)
     private AccountType type;
-
-
-
-
-
-    //cpf email e address -> atributos do teacher
-    //bank data deixa de existir e os atributos ficam nesta classe
-
 
 }

@@ -1,10 +1,21 @@
 package com.expressacademy.professores.domain;
 
 public enum Level {
-    BASICO,
-    INTERMEDIARIO,
-    AVANCADO,
-    CONVERSACAO
+    BASICO("Básico"),
+    INTERMEDIARIO("Intermediário"),
+    AVANCADO("Avançado"),
+    CONVERSACAO("Conversação");
+
+    private String name;
+
+    Level(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
 
 

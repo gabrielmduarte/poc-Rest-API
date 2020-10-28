@@ -15,6 +15,7 @@ public interface PaymentInfoMapper {
 
     @Mapping(target = "type", expression = "java(entity.getType().getName())")
     @Mapping(target = "bank", expression = "java(entity.getBank().getName())")
+    @Mapping(target = "bankCode", expression = "java(entity.getBank().getCode())")
     PaymentInfoResponse toResponse(PaymentInfoEntity entity);
 
 }

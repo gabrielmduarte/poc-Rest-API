@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -26,12 +26,14 @@ public class CourseEntity {
     @JoinColumn(nullable = false)
     private LanguageEntity language;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Level level;
 
     @Column(nullable = false)
-    private boolean active;//status
+    private Status status;
+
+    @Column(nullable = false)
+    private boolean active;
 
     @ManyToOne
     @JsonBackReference
@@ -39,41 +41,49 @@ public class CourseEntity {
 
     @OneToMany(mappedBy = "course")
     @JsonManagedReference
-    private List<EnrollmentEntity> enrollments = new ArrayList<>();
+    private List<EnrollmentEntity> enrollments;
 
     @Column(nullable = false)
     private int numberOfClasses;
 
     private int classesGiven;
 
-    @Column(nullable = false)
-    private Month firstMonth;
-
-    @Enumerated(EnumType.STRING)
-    private Month lastMonth;
-
     @Enumerated(EnumType.STRING)
     private Weekday classDay;
 
     @Column(nullable = false)
-    private String hour;
+    private LocalTime time;
 
     private String note;
 
     @Column(nullable = false)
-    private boolean allMonthlyFeePaid;
-
-    @Column(nullable = false)
     private BigDecimal monthlyPrice;
-//
-//    @Column(nullable = false)
-//    private int totalEnrollments;
 
     @Column(nullable = false)
-    //@JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate firstPaymentDate;
 
-    @Column(nullable = false)
-    private int numberOfMonthlyPayments;
+    public int getTotalEnrollments() {
+        return this.getEnrollments().size();
+    }
+
+    public String getStatusDescription() {
+        return this.status.getDescription();
+    }
+
+    public String getLevelName() {
+        return this.level.getName();
+    }
+
+    public String getClassDayName() {
+        return this.classDay.getDay();
+    }
+
+    public String getTeacherName() {
+        return this.teacher.getName();
+    }
+
+    public String getLanguageName() {
+        return this.language.getName();
+    }
 
 }

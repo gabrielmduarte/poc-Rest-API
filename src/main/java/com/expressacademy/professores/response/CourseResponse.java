@@ -1,45 +1,34 @@
 package com.expressacademy.professores.response;
 
-import com.expressacademy.professores.domain.EnrollmentEntity;
-import com.expressacademy.professores.domain.Level;
-import com.expressacademy.professores.domain.Month;
-import com.expressacademy.professores.domain.Weekday;
 import lombok.Data;
-
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalTime;
 
 @Data
 public class CourseResponse {
 
     private Long id;
 
-    private TeacherResponse teacher;
+    private String status;
 
-    private LanguageResponse language;
+    private String level;
 
-    private Level level;
+    private String classDay;
 
-    private int numberOfClasses;
+    private int totalEnrollments;
+
+    private LocalTime time;
 
     private int classesGiven;
 
-    private Month firstMonth;
-
-    private Month lastMonth;
-
-    private Weekday classDay;
-
-    private String hour;
+    private int numberOfClasses;
 
     private String note;
 
     private BigDecimal monthlyPrice;
 
-    private boolean AllMonthlyFeePaid;
+    private String teacher;
 
-    private List<EnrollmentEntity> enrollments;
-
-    private int totalEnrollments;
+    private String language;
 
 }
