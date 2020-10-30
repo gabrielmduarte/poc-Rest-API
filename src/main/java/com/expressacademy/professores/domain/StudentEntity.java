@@ -34,6 +34,6 @@ public class StudentEntity {
 
     @OneToMany(mappedBy = "student")
     @JsonManagedReference
-    private List<EnrollmentEntity> enrollments = new ArrayList<>();
+    private List<EnrollmentEntity> enrollments;
 
 }

@@ -36,15 +36,25 @@ public class EnrollmentEntity {
     @Column(nullable = false)
     private BigDecimal discount;
 
-    @Column(nullable = false)
-    private BigDecimal discountPercentage;
-
     private BigDecimal monthlyFee;
 
     @OneToMany(mappedBy = "enrollment")
     @JsonManagedReference
-    private List<MonthlyPaymentEntity> payments = new ArrayList<>();
+    private List<MonthlyPaymentEntity> payments;
 
-    private boolean pastDue;
+    public String getCourseInfos() {
+        String languageName = this.course.getLanguageName();
+        String levelName = this.course.getLevelName();
+        String teacherName = this.course.getTeacherName();
+
+        return "Id= " + this.course.getId() +
+                ", idioma= " + languageName +
+                ", nível= " + levelName +
+                ", professor= " + teacherName;
+    }
+
+    public String getStudentName() {
+        return this.student.getName();
+    }
 
 }

@@ -5,7 +5,6 @@ import com.expressacademy.professores.domain.Status;
 import com.expressacademy.professores.domain.Weekday;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,11 +28,11 @@ public class CourseRequest {
     private Weekday classDay;
 
     @NotNull
-    @Range(min = 0, max = 24)
+    @Range(max = 24)
     private int hour;
 
     @NotNull
-    @Range(min = 00, max = 60)
+    @Range(max = 60)
     private int minutes;
 
     private String note;

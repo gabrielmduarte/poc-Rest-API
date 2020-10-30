@@ -2,9 +2,7 @@ package com.expressacademy.professores.response;
 
 import com.expressacademy.professores.domain.MonthlyPaymentEntity;
 import lombok.Data;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,10 +14,10 @@ public class EnrollmentResponse {
 
     private BigDecimal monthlyFee;
 
-    private List<MonthlyPaymentEntity> payments = new ArrayList<>();
+    private List<MonthlyPaymentEntity> payments;
 
-    private StudentResponse student;
+    private String studentName;
 
-    private CourseResponse course;
+    private String courseInfos;
 
 }

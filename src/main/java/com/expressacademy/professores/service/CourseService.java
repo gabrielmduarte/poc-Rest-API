@@ -1,6 +1,7 @@
 package com.expressacademy.professores.service;
 
 import com.expressacademy.professores.domain.CourseEntity;
+import com.expressacademy.professores.domain.EnrollmentEntity;
 import com.expressacademy.professores.domain.LanguageEntity;
 import com.expressacademy.professores.domain.TeacherEntity;
 import com.expressacademy.professores.exception.CourseNotFoundException;
@@ -112,5 +113,22 @@ public class CourseService {
         courseEntity.setActive(false);
 
         courseRepository.save(courseEntity);
+    }
+
+    public CourseEntity getCourseEntity(Long id) {
+        return courseRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(CourseNotFoundException::new);
+    }
+
+    public void addEnrollmentToList(EnrollmentEntity enrollmentEntity, CourseEntity courseEntity) {
+        courseEntity.getEnrollments().add(enrollmentEntity);
+
+        courseRepository.save(courseEntity);
+    }
+
+    public void removeEnrollment(EnrollmentEntity enrollmentEntity, CourseEntity course) {
+        course.getEnrollments().remove(enrollmentEntity);
+
+        courseRepository.save(course);
     }
 }

@@ -27,7 +27,7 @@ public class StudentController {
     @GetMapping("/{id}")
     public StudentResponse findOne(@PathVariable Long id) {
         log.info("M=findOne, I=buscando um aluno, Id={}", id);
-        return studentService.findOne(id);
+        return studentService.findById(id);
     }
 
     @PostMapping
