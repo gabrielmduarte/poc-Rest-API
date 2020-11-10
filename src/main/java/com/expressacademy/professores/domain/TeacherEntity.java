@@ -2,6 +2,8 @@ package com.expressacademy.professores.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,14 +24,11 @@ public class TeacherEntity {
     private String name;
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     private PaymentInfoEntity paymentInfo;
 
     @Column(nullable = false)
     private boolean active;
-
-    @OneToMany(mappedBy = "teacher")
-    @JsonManagedReference
-    private List<CourseEntity> courses;
 
     @Column(nullable = false, unique = true)
     private String email;

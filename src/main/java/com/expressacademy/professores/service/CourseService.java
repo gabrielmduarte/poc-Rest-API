@@ -11,7 +11,6 @@ import com.expressacademy.professores.request.CourseRequest;
 import com.expressacademy.professores.response.CourseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +60,6 @@ public class CourseService {
         courseEntity.setTime(time);
         courseEntity.setActive(true);
 
-        teachersService.addCourseInTeacherList(courseEntity, teacherEntity);
-
         courseRepository.save(courseEntity);
     }
 
@@ -92,9 +89,6 @@ public class CourseService {
             TeacherEntity newTeacher = teachersService
                     .findByIdAndReturnEntity(courseRequest.getTeacherId());
             TeacherEntity oldTeacher = courseEntity.getTeacher();
-
-            teachersService.addCourseInTeacherList(courseEntity, newTeacher);
-            teachersService.removeCourseOfTeacherList(courseEntity, oldTeacher);
 
             courseEntity.setTeacher(newTeacher);
         }

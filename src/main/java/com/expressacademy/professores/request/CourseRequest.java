@@ -44,6 +44,9 @@ public class CourseRequest {
     private LocalDate firstPaymentDate;
 
     @NotNull
+    private int numberOfMonthlyPayments;
+
+    @NotNull
     private Long teacherId;
 
     @NotNull

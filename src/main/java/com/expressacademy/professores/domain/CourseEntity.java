@@ -3,6 +3,8 @@ package com.expressacademy.professores.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,19 +26,22 @@ public class CourseEntity {
 
     @OneToOne
     @JoinColumn(nullable = false)
+    @ToString.Exclude
     private LanguageEntity language;
 
     @Column(nullable = false)
+    @ToString.Exclude
     private Level level;
 
     @Column(nullable = false)
+    @ToString.Exclude
     private Status status;
 
     @Column(nullable = false)
     private boolean active;
 
     @ManyToOne
-    @JsonBackReference
+    @ToString.Exclude
     private TeacherEntity teacher;
 
     @OneToMany(mappedBy = "course")
@@ -61,6 +66,9 @@ public class CourseEntity {
 
     @Column(nullable = false)
     private LocalDate firstPaymentDate;
+
+    @Column(nullable = false)
+    private int numberOfMonthlyPayments;
 
     public int getTotalEnrollments() {
         return this.getEnrollments().size();

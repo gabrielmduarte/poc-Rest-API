@@ -2,6 +2,7 @@ package com.expressacademy.professores.service;
 
 import com.expressacademy.professores.domain.CourseEntity;
 import com.expressacademy.professores.domain.EnrollmentEntity;
+import com.expressacademy.professores.domain.MonthlyPaymentEntity;
 import com.expressacademy.professores.domain.StudentEntity;
 import com.expressacademy.professores.mapper.EnrollmentMapper;
 import com.expressacademy.professores.repository.EnrollmentRepository;
@@ -32,21 +33,29 @@ public class EnrollmentService {
     @Autowired
     private StudentService studentService;
 
-    public void create(EnrollmentRequest enrollmentRequest) {
-        EnrollmentEntity enrollmentEntity = enrollmentMapper.toEntity(enrollmentRequest);
-        StudentEntity studentEntity = studentService.getStudentEntity(enrollmentRequest.getStudentId());
-        CourseEntity courseEntity = courseService.getCourseEntity(enrollmentRequest.getCourseId());
+    @Autowired
+    private MonthlyPaymentService paymentService;
+
+    public void create(final EnrollmentRequest enrollmentRequest) {
+        final EnrollmentEntity enrollmentEntity = enrollmentMapper.toEntity(enrollmentRequest);
+        final StudentEntity studentEntity = studentService.getStudentEntity(enrollmentRequest.getStudentId());
+        final CourseEntity courseEntity = courseService.getCourseEntity(enrollmentRequest.getCourseId());
+
+        BigDecimal monthlyFee = calculateMonthlyFee(enrollmentEntity.getDiscount(), courseEntity);
 
         enrollmentEntity.setActive(true);
         enrollmentEntity.setStudent(studentEntity);
         enrollmentEntity.setCourse(courseEntity);
-        enrollmentEntity.setMonthlyFee(getMonthlyFee(enrollmentEntity.getDiscount(), courseEntity));
+        enrollmentEntity.setMonthlyFee(monthlyFee);
         enrollmentEntity.setPayments(new ArrayList<>());
 
         courseService.addEnrollmentToList(enrollmentEntity, courseEntity);
         studentService.addEnrollmentToList(enrollmentEntity, studentEntity);
+        List<MonthlyPaymentEntity> allMonthlyFees = paymentService.createAllMonthlyFees(monthlyFee, courseEntity);
 
-        enrollmentRepository.save(enrollmentEntity);
+        enrollmentEntity.setPayments(allMonthlyFees);
+        EnrollmentEntity savedEnrollmentEntity = enrollmentRepository.save(enrollmentEntity);
+
     }
 
     public List<EnrollmentResponse> findAll() {
@@ -56,9 +65,9 @@ public class EnrollmentService {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal getMonthlyFee(BigDecimal discount, CourseEntity course) {
-        BigDecimal percentualDiscount = new BigDecimal(0.01).multiply(discount);
-        BigDecimal discountInMoney = course.getMonthlyPrice().multiply(percentualDiscount);
+    private BigDecimal calculateMonthlyFee(final BigDecimal discount, final CourseEntity course) {
+        final BigDecimal percentualDiscount = new BigDecimal(0.01).multiply(discount);
+        final BigDecimal discountInMoney = course.getMonthlyPrice().multiply(percentualDiscount);
 
         return course.getMonthlyPrice().subtract(discountInMoney);
     }
@@ -81,5 +90,10 @@ public class EnrollmentService {
         studentService.removeEnrollment(enrollmentEntity, enrollmentEntity.getStudent());
 
         enrollmentRepository.save(enrollmentEntity);
+    }
+
+    public EnrollmentEntity findByIdAndReturnEntity(Long id) {
+        return enrollmentRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(RuntimeException::new);
     }
 }

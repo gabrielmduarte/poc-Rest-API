@@ -25,13 +25,8 @@ public class MonthlyPaymentEntity {
     @Column(nullable = false)
     private LocalDate dueDate;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    private EnrollmentEntity enrollment;
-
     @Column(nullable = false)
     private boolean paid;
-
-    private boolean pastDue;
 
     @Column(nullable = false)
     private BigDecimal price;
@@ -39,3 +34,4 @@ public class MonthlyPaymentEntity {
     private BigDecimal discount;
 
 }
+

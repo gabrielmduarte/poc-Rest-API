@@ -3,6 +3,7 @@ package com.expressacademy.professores.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -23,10 +24,12 @@ public class EnrollmentEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     @JsonBackReference
     private StudentEntity student;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     @JsonBackReference
     private CourseEntity course;
 
@@ -38,8 +41,8 @@ public class EnrollmentEntity {
 
     private BigDecimal monthlyFee;
 
-    @OneToMany(mappedBy = "enrollment")
-    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.PERSIST)
+
     private List<MonthlyPaymentEntity> payments;
 
     public String getCourseInfos() {

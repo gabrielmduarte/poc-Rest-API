@@ -24,9 +24,7 @@ public class TeachersService {
 
     public void create(TeachersRequest request) {
         TeacherEntity teacherEntity = teacherMapper.toEntity(request);
-
         teacherEntity.setActive(true);
-        teacherEntity.setCourses(new ArrayList<>());
 
         teacherRepository.save(teacherEntity);
     }
@@ -82,17 +80,6 @@ public class TeachersService {
     public TeacherEntity findByIdAndReturnEntity(Long id) {
         return teacherRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(TeacherNotFoundException::new);
-    }
-
-    public void addCourseInTeacherList(CourseEntity courseEntity,
-                                       TeacherEntity teacherEntity) {
-        teacherEntity.getCourses().add(courseEntity);
-        teacherRepository.save(teacherEntity);
-    }
-
-    public void removeCourseOfTeacherList(CourseEntity courseEntity, TeacherEntity oldTeacher) {
-        oldTeacher.getCourses().remove(courseEntity);
-        teacherRepository.save(oldTeacher);
     }
 
 }
